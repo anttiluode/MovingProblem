@@ -250,9 +250,9 @@ The six axes expose 15 antisymmetric pair features. Each pair receives two possi
 
 | method | held-out accuracy |
 |---|---:|
-| **learned skew-energy axes + delayed structural consequence** | **0.8867 ± 0.0634** |
-| random six hidden axes + same consequence learner | 0.5317 ± 0.0680 |
-| shuffle time only while hidden axes learn | 0.5700 ± 0.0819 |
+| **learned skew-energy axes + delayed structural consequence** | **0.8800 ± 0.0476** |
+| random six hidden axes + same consequence learner | 0.5500 ± 0.0950 |
+| shuffle time only while hidden axes learn | 0.5400 ± 0.0852 |
 | erase eligibility | 0.5000 |
 | power-only on same learned axes | 0.5000 |
 | full 496-coordinate skew field + ridge on same 16 labels | **0.8783 ± 0.0506** |
@@ -263,7 +263,7 @@ It is not an optimizer victory. A boring supervised ridge readout over all 496 s
 
 The earned statement is narrower:
 
-> **Unlabeled temporal self-organization can compress a 32-D moving representation into a small directed feature repertoire on which delayed scalar consequence performs about as well as supervised fitting over the full skew field.**
+> **Unlabeled temporal self-organization can compress a 32-D moving representation into a small directed feature repertoire on which delayed scalar consequence matches supervised fitting over the full skew field to within this development gate's noise.**
 
 See [results/GATE1.md](results/GATE1.md).
 
