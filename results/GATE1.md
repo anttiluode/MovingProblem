@@ -146,9 +146,9 @@ Each seed uses an independently rotated 32-D observation basis.
 
 | method | held-out accuracy |
 |---|---:|
-| **Sanger skew-energy hidden axes + delayed structural consequence** | **0.8867 ± 0.0634** |
-| random six hidden axes + same downstream learner | 0.5317 ± 0.0680 |
-| learn hidden axes after shuffling time | 0.5700 ± 0.0819 |
+| **Sanger skew-energy hidden axes + delayed structural consequence** | **0.8800 ± 0.0476** |
+| random six hidden axes + same downstream learner | 0.5500 ± 0.0950 |
+| learn hidden axes after shuffling time | 0.5400 ± 0.0852 |
 | erase eligibility before consequence | 0.5000 |
 | power-only on the same learned axes | 0.5000 |
 | full 496-coordinate skew field + supervised ridge on same 16 labels | **0.8783 ± 0.0506** |
@@ -156,13 +156,13 @@ Each seed uses an independently rotated 32-D observation basis.
 The learned six-axis subspace captures about
 
 ```text
-0.2488 ± 0.0038
+0.2506 ± 0.0020
 ```
 
 of the unlabeled skew energy, versus
 
 ```text
-0.1879 ± 0.0042
+0.1887 ± 0.0041
 ```
 
 for six random axes.
@@ -176,8 +176,8 @@ The power feature difference between each exact forward/reverse pair is at float
 With the same six-axis budget, same 15 pair features, same 16 scalar-consequence examples, and same positive-mass learner:
 
 ```text
-learned hidden axes   0.8867
-random hidden axes    0.5317
+learned hidden axes   0.8800
+random hidden axes    0.5500
 ```
 
 So in this deliberately high-dimensional nuisance world, the hidden learner is not decorative.
@@ -187,7 +187,7 @@ So in this deliberately high-dimensional nuisance world, the hidden learner is n
 Destroy temporal order only while the hidden axes learn:
 
 ```text
-0.8867 -> 0.5700
+0.8800 -> 0.5400
 ```
 
 The learner needs the skew temporal structure, not merely the frame marginals.
@@ -197,7 +197,7 @@ The learner needs the skew temporal structure, not merely the frame marginals.
 Erase the local packet before scalar consequence arrives:
 
 ```text
-0.8867 -> 0.5000
+0.8800 -> 0.5000
 ```
 
 Consequence without an address does not select useful structure.
@@ -216,7 +216,7 @@ That attacker is simpler if global supervised matrix fitting is allowed.
 
 The narrower positive result is:
 
-> **Unlabeled local-ish temporal self-organization can compress a 32-D moving representation into a six-axis, 15-pair directed feature repertoire on which a one-pass delayed scalar-consequence allocator performs about as well as a supervised readout over the full 496-coordinate skew field.**
+> **Unlabeled local-ish temporal self-organization can compress a 32-D moving representation into a six-axis, 15-pair directed feature repertoire on which a one-pass delayed scalar-consequence allocator performs essentially the same held-out accuracy as a supervised readout over the full 496-coordinate skew field in this development gate.**
 
 That is useful enough to continue, but not enough to call the learning rule new.
 
