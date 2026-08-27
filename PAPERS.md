@@ -68,6 +68,46 @@ Gate 0 uses a fixed random `tanh` feature bank and a ridge-trained output. This 
 
 The point of Gate 0 is not the random-feature learner. The point is whether the **already learned nonlinear function remains usable after the raw coordinate system changes**.
 
+
+
+## Oja / Sanger — the hidden learner in Gate 1 is old
+
+Gate 1's hidden update is not a new learning rule.
+
+- E. Oja, **Simplified neuron model as a principal component analyzer**, *Journal of Mathematical Biology* 15, 267–273 (1982). DOI: https://doi.org/10.1007/BF00275687
+- T. D. Sanger, **Optimal unsupervised learning in a single-layer linear feedforward neural network**, *Neural Networks* 2(6), 459–473 (1989). DOI: https://doi.org/10.1016/0893-6080(89)90044-0
+
+Gate 1 uses Sanger's generalized Hebbian rule explicitly:
+
+```text
+y = W u
+Delta w_i = eta y_i (u - sum_(j<=i) y_j w_j)
+```
+
+The only MovingProblem-specific move is what is fed into that mature learner: columns of per-sequence **skew lag matrices**. Their covariance is proportional to an unsigned skew-energy operator, so exact forward/reverse pairs reinforce the same rotation subspace instead of cancelling.
+
+Therefore:
+
+> **"Sanger learns hidden directions without backprop" is old. "Use Sanger on skew-energy samples, then let delayed consequence select among the resulting directed planes" is the tested recombination here, not yet a novelty claim.**
+
+## Eligibility / three-factor credit is also prior art
+
+The Gate 1 downstream rule has the ordinary shape
+
+```text
+local activity -> eligibility trace
+later scalar consequence -> modulate the trace
+```
+
+This belongs to the broad family of eligibility-trace / three-factor learning rules rather than being a MovingProblem invention.
+
+A relevant biological/computational example is:
+
+- E. M. Izhikevich, **Solving the distal reward problem through linkage of STDP and dopamine signaling**, *Cerebral Cortex* 17(10), 2443–2452 (2007). DOI: https://doi.org/10.1093/cercor/bhl152
+
+MovingProblem's implementation is much simpler and not an STDP model. The citation is here to mark the occupied conceptual territory: delayed global modulation meeting a locally retained trace is established prior art.
+
+
 ## Ji et al. — Current Biology (2025)
 
 Z. Ji, T. Chu, S. Wu & N. Burgess, **A systems model of alternating theta sweeps via firing rate adaptation**.
