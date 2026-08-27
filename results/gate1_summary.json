@@ -1,0 +1,46 @@
+{
+  "learned_local": {
+    "mean": 0.8866666666666667,
+    "std": 0.06342099196813483
+  },
+  "random_hidden": {
+    "mean": 0.5316666666666666,
+    "std": 0.06804818554197868
+  },
+  "shuffled_hidden_time": {
+    "mean": 0.5700000000000002,
+    "std": 0.08185352771872449
+  },
+  "no_eligibility": {
+    "mean": 0.5,
+    "std": 0.0
+  },
+  "power_only": {
+    "mean": 0.5,
+    "std": 0.0
+  },
+  "full_skew_ridge": {
+    "mean": 0.8783333333333334,
+    "std": 0.05063485843654438
+  },
+  "learned_skew_energy_capture": {
+    "mean": 0.24881501,
+    "std": 0.00376643
+  },
+  "random_skew_energy_capture": {
+    "mean": 0.18786809,
+    "std": 0.00421832
+  },
+  "power_pair_max_difference": {
+    "mean": 1.9984014443252818e-15,
+    "std": 2.220446049250313e-16
+  },
+  "structural_effective_candidates": {
+    "mean": 20.396069241631164,
+    "std": 1.2426855266867578
+  },
+  "structural_largest_mass": {
+    "mean": 0.10502381413053502,
+    "std": 0.019548535831575564
+  }
+}
