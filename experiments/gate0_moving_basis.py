@@ -2,6 +2,10 @@
 """Gate 0: preserve a learned nonlinear function while the observation basis moves."""
 import json
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from moving_problem import summarize_gate0
 
