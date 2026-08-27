@@ -73,7 +73,7 @@ def make_session(
     basis: Array | None = None,
 ) -> Tuple[Array, Array, Array]:
     """Render exact reversal pairs through one unknown orthogonal basis."""
-    rng = np.random.default_rng(seed + 91_337)
+    rng = np.random.default_rng(seed + 987)
     if basis is None:
         basis = random_orthogonal(rng, dim)
 
@@ -161,7 +161,7 @@ def learn_skew_energy_axes(
     """
     x_used = np.asarray(x_whitened).copy()
     if shuffle_time:
-        rng = np.random.default_rng(seed + 700_001)
+        rng = np.random.default_rng(seed + 777)
         for sequence in x_used:
             rng.shuffle(sequence, axis=0)
 
@@ -178,8 +178,7 @@ def learn_skew_energy_axes(
 
 def random_axes(dim: int, n_axes: int, seed: int) -> Array:
     rng = np.random.default_rng(seed)
-    q, _ = np.linalg.qr(rng.normal(size=(dim, n_axes)))
-    return q[:, :n_axes]
+    return random_orthogonal(rng, dim)[:, :n_axes]
 
 
 def pair_arrow_features(x_whitened: Array, axes: Array, lag: int = 3) -> Array:
