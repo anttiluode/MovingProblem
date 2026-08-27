@@ -264,6 +264,11 @@ def mass_predict(
 
 
 def accuracy(prediction: Array, target: Array) -> float:
+    prediction = np.asarray(prediction, dtype=float).copy()
+    # A perfectly symmetric +feature/-feature mass allocation should predict
+    # exactly zero. Floating-point summation can leave meaningless ~1e-17 signs,
+    # so collapse numerical zero before thresholding.
+    prediction[np.abs(prediction) < 1e-12] = 0.0
     labels = np.where(prediction >= 0.0, 1.0, -1.0)
     return float(np.mean(labels == target))
 
