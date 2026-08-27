@@ -192,44 +192,102 @@ keep using the learned nonlinear computation
 
 That is an actual non-backprop use case.
 
-# Gate 1 — the real wall
+# Gate 1 — hidden temporal structure learns without backprop
 
-Gate 0 still uses a fixed random hidden feature bank and a closed-form trained readout.
+Gate 1 resurrects a problem we had already solved elsewhere, then removes the old optimizer.
 
-That is not the end goal.
+The ancestry is unusually clean:
 
-The next question is:
+- [GeometricNeuronV9](https://github.com/anttiluode/GeometricNeuronV9) identified direction with the skew half of a lag operator.
+- [RecurrentGeometricNet](https://github.com/anttiluode/RecurrentGeometricNet) learned a time-arrow classifier, but inspection of the actual code shows that its hidden filters/edges were trained with PyTorch `loss.backward()`.
+- [GeoNeuronX Gate 5](https://github.com/anttiluode/GeoNeuronX/blob/main/results/GATE5.md) had an explicit NumPy Sanger/Oja learner that specialized temporal axes without source labels.
+- [yrotisopeRweN Gates 8–10](https://github.com/anttiluode/yrotisopeRweN/blob/main/results/GATE8.md) had delayed eligibility, scalar consequence, and finite structural allocation.
 
-> **Can hidden structure itself learn a useful nonlinear computation from local forward activity and delayed/scalar consequence, without reverse credit propagation, while beating matched node-perturbation / random-feature / Forward-Forward attackers?**
+Gate 1 asks whether those latter two pieces can replace the backprop hidden learner on a direction task.
 
-Mandatory attackers:
+## Harder moving-basis world
 
-- fixed random features + ridge / RLS;
-- LMS / delta readout;
-- node perturbation / REINFORCE-style scalar learning;
-- SPSA / evolution-strategy style perturbation;
-- Forward-Forward;
-- feedback alignment where applicable;
-- ordinary backprop MLP;
-- matched temporal source-separation front ends.
+Each example is a 32-channel stream:
 
-Kill conditions:
+```text
+one coherent 2-D chirped rotation
+        +
+30 independent nuisance processes
+        ↓
+fresh unknown 32-D orthogonal observation basis
+```
 
-- if the hidden update is algebraically just backprop, kill the claim;
-- if it is ordinary node perturbation with a new name, call it node perturbation;
-- if fixed random features perform as well, hidden learning did not earn a role;
-- if a standard adaptive BSS front-end solves the moving representation problem more simply, use it;
-- if backprop wins and the non-backprop method has no compensating online / locality / hardware advantage, do not pretend otherwise.
+The opposite class is the **exact time reverse**, including noise.
+
+Therefore ordinary power is identically matched.
+
+## Hidden learning
+
+After zero-lag whitening (still a global convenience), each unlabeled sequence produces a skew lag matrix:
+
+```text
+A_i = 1/2 E[
+      x_t x_(t-lag)^T
+    - x_(t-lag) x_t^T
+]
+```
+
+Time reversal flips `A_i -> -A_i`, but leaves `A_i A_i^T` unchanged.
+
+Columns of the per-sequence skew matrices are presented to an explicit Sanger generalized-Hebbian population. Six hidden axes self-organize using only forward activity and lateral competition.
+
+No labels.
+
+No autograd.
+
+No backward error.
+
+The six axes expose 15 antisymmetric pair features. Each pair receives two possible orientations, and all 30 candidates compete for one conserved positive structural budget. Only 16 calibration sequences receive task consequence. The consequence arrives three events after the local feature, so an eligibility packet is required.
+
+## Result
+
+12 independently rotated 32-D observation bases:
+
+| method | held-out accuracy |
+|---|---:|
+| **learned skew-energy axes + delayed structural consequence** | **0.8867 ± 0.0634** |
+| random six hidden axes + same consequence learner | 0.5317 ± 0.0680 |
+| shuffle time only while hidden axes learn | 0.5700 ± 0.0819 |
+| erase eligibility | 0.5000 |
+| power-only on same learned axes | 0.5000 |
+| full 496-coordinate skew field + ridge on same 16 labels | **0.8783 ± 0.0506** |
+
+This is the first gate here where **hidden structure itself learns without backprop and beats the matched fixed-random hidden representation**.
+
+It is not an optimizer victory. A boring supervised ridge readout over all 496 skew coordinates is in the same performance range.
+
+The earned statement is narrower:
+
+> **Unlabeled temporal self-organization can compress a 32-D moving representation into a small directed feature repertoire on which delayed scalar consequence performs about as well as supervised fitting over the full skew field.**
+
+See [results/GATE1.md](results/GATE1.md).
+
+## What Gate 1 still does not solve
+
+- global batch whitening remains;
+- arbitrary deep credit assignment remains unsolved;
+- the sequence is still chunked rather than truly endless;
+- the structural selector is shallow;
+- ordinary adaptive BSS / supervised matrix methods remain mandatory attackers;
+- recombining old mechanisms is not evidence of novelty.
+
+The next clean attack is to make the observation basis change **during one uninterrupted stream**, let the hidden skew axes reorganize online, and ask whether the task selector can persist instead of being relearned.
 
 ## Run
 
 ```bash
 python -m pip install -r requirements.txt
 python experiments/gate0_moving_basis.py
+python experiments/gate1_local_temporal_learning.py
 python -m unittest discover -s tests -v
 ```
 
-The experiment writes `results/gate0_summary.json`.
+The experiment runners write `results/gate0_summary.json` and `results/gate1_summary.json`.
 
 ## Current sentence
 
