@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MovingProblem Gate 4 — Green Light, Wrong Sign</title>
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#0b0d10; --panel:#13171c; --line:#2b333d; --text:#eef3f8;
+    --muted:#98a5b3; --green:#55e38a; --red:#ff6767; --amber:#ffd166; --blue:#71b7ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);color:var(--text)}
+  main{max-width:1120px;margin:0 auto;padding:28px}
+  h1{font-size:26px;margin:0 0 8px}
+  .sub{color:var(--muted);margin-bottom:22px;line-height:1.5}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  canvas{width:100%;height:auto;display:block;background:#0e1216;border-radius:10px;border:1px solid var(--line)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  button{font:inherit;background:#1a222b;color:var(--text);border:1px solid #394654;border-radius:9px;padding:9px 12px;cursor:pointer}
+  button:hover{background:#222c37}
+  label{color:var(--muted)}
+  select,input{font:inherit}
+  .metric{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin-top:14px}
+  .metric b{font-weight:600}
+  .ok{color:var(--green)} .bad{color:var(--red)} .warn{color:var(--amber)}
+  .banner{margin-top:18px;padding:14px;border-radius:10px;border:1px solid var(--line);font-size:15px;line-height:1.45}
+  .formula{color:var(--blue)}
+  .footer{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.5}
+  @media(max-width:850px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Green light. Wrong sign.</h1>
+  <div class="sub">
+    A real-symmetric frame tracker follows the principal eigenvector continuously.
+    The local eigengap never becomes unsafe. Yet one loop around a degeneracy flips the oriented sign.
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Parameter path</h2>
+      <canvas id="param" width="500" height="500"></canvas>
+      <div class="row">
+        <button id="run">Run loop</button>
+        <button id="reset">Reset</button>
+        <label>Path:
+          <select id="path">
+            <option value="enclose">encloses degeneracy</option>
+            <option value="miss">does not enclose</option>
+            <option value="double">two loops</option>
+          </select>
+        </label>
+      </div>
+      <div class="metric">
+        <b>Local eigengap</b><span id="gap">2.000</span>
+        <b>Health check</b><span id="health" class="ok">GREEN</span>
+        <b>Winding</b><span id="winding">0.000</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Transported semantic orientation</h2>
+      <canvas id="frame" width="500" height="500"></canvas>
+      <div class="row">
+        <label><input id="fix" type="checkbox"> apply one-bit winding-parity fix</label>
+      </div>
+      <div class="metric">
+        <b>Alignment with start</b><span id="align">+1.000</span>
+        <b>Grounded semantic sign</b><span id="sign" class="ok">+1</span>
+        <b>Local warnings fired</b><span id="warnings">0</span>
+      </div>
+      <div id="banner" class="banner">
+        Run the enclosing loop. The health light stays green.
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">
+    Operator:
+    <span class="formula">L(a,b) = [[a,b],[b,-a]]</span>,
+    eigengap <span class="formula">g = 2√(a²+b²)</span>.
+    For the unit circle, <span class="formula">g = 2</span> everywhere.
+    The failure is topological: the eigenline returns, the oriented eigenvector can return with sign −1.
+  </div>
+</main>
+
+<script>
+const pc = document.getElementById('param'), pctx = pc.getContext('2d');
+const fc = document.getElementById('frame'), fctx = fc.getContext('2d');
+const runBtn = document.getElementById('run'), resetBtn = document.getElementById('reset');
+const pathSel = document.getElementById('path'), fixBox = document.getElementById('fix');
+const gapEl = document.getElementById('gap'), healthEl = document.getElementById('health');
+const windingEl = document.getElementById('winding'), alignEl = document.getElementById('align');
+const signEl = document.getElementById('sign'), warningsEl = document.getElementById('warnings');
+const banner = document.getElementById('banner');
+
+let progress=0, running=false, raf=null;
+
+function cfg(){
+  const p=pathSel.value;
+  if(p==='miss') return {turns:1, ox:1.6, oy:0};
+  if(p==='double') return {turns:2, ox:0, oy:0};
+  return {turns:1, ox:0, oy:0};
+}
+function state(t){
+  const c=cfg();
+  const phi=2*Math.PI*c.turns*t;
+  const a=c.ox + Math.cos(phi);
+  const b=c.oy + Math.sin(phi);
+  const r=Math.hypot(a,b);
+  const gap=2*r;
+  // unwrapped parameter angle only for enclosing/double paths; for miss use principal angle.
+  let arg;
+  if(c.ox===0 && c.oy===0) arg=phi;
+  else arg=Math.atan2(b,a);
+  const theta=0.5*arg;
+  const vx=Math.cos(theta), vy=Math.sin(theta);
+  const winding = (c.ox===0 && c.oy===0) ? c.turns*t : 0;
+  return {a,b,gap,vx,vy,winding,phi};
+}
+function clear(ctx,w,h){ctx.clearRect(0,0,w,h)}
+function drawParam(s){
+  const w=pc.width,h=pc.height,cx=w/2,cy=h/2,scale=115;
+  clear(pctx,w,h);
+  pctx.strokeStyle='#26303a'; pctx.lineWidth=1;
+  pctx.beginPath(); pctx.moveTo(30,cy); pctx.lineTo(w-30,cy); pctx.moveTo(cx,30); pctx.lineTo(cx,h-30); pctx.stroke();
+
+  const c=cfg();
+  pctx.strokeStyle='#596676'; pctx.lineWidth=2;
+  pctx.beginPath();
+  for(let i=0;i<=500;i++){
+    const t=i/500, ph=2*Math.PI*c.turns*t;
+    const a=c.ox+Math.cos(ph), b=c.oy+Math.sin(ph);
+    const x=cx+a*scale, y=cy-b*scale;
+    if(i===0)pctx.moveTo(x,y); else pctx.lineTo(x,y);
+  }
+  pctx.stroke();
+
+  pctx.fillStyle='#ff6767';
+  pctx.beginPath(); pctx.arc(cx,cy,8,0,2*Math.PI); pctx.fill();
+  pctx.fillStyle='#98a5b3'; pctx.fillText('degeneracy',cx+12,cy-12);
+
+  pctx.fillStyle='#ffd166';
+  pctx.beginPath(); pctx.arc(cx+s.a*scale,cy-s.b*scale,9,0,2*Math.PI); pctx.fill();
+
+  pctx.fillStyle='#eef3f8';
+  pctx.fillText('a',w-28,cy-8); pctx.fillText('b',cx+8,24);
+}
+function arrow(ctx,x1,y1,x2,y2,color,width=5){
+  const ang=Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-16*Math.cos(ang-Math.PI/6),y2-16*Math.sin(ang-Math.PI/6));
+  ctx.lineTo(x2-16*Math.cos(ang+Math.PI/6),y2-16*Math.sin(ang+Math.PI/6));
+  ctx.closePath(); ctx.fill();
+}
+function drawFrame(s){
+  const w=fc.width,h=fc.height,cx=w/2,cy=h/2,R=145;
+  clear(fctx,w,h);
+  fctx.strokeStyle='#26303a'; fctx.beginPath(); fctx.arc(cx,cy,R,0,2*Math.PI); fctx.stroke();
+
+  arrow(fctx,cx,cy,cx+R,cy,'#596676',3);
+  fctx.fillStyle='#98a5b3'; fctx.fillText('start +',cx+R-58,cy-12);
+
+  let vx=s.vx, vy=s.vy;
+  let semanticSign = Math.sign(vx || 1);
+  const c=cfg();
+  const parity = (c.ox===0 && c.oy===0 && progress>=0.999999) ? (c.turns%2) : 0;
+  if(fixBox.checked && parity===1){vx=-vx; vy=-vy; semanticSign*=-1;}
+
+  arrow(fctx,cx,cy,cx+R*vx,cy-R*vy, semanticSign>=0 ? '#55e38a' : '#ff6767',6);
+}
+function render(){
+  const s=state(progress);
+  drawParam(s); drawFrame(s);
+  gapEl.textContent=s.gap.toFixed(3);
+  healthEl.textContent=s.gap>0.5?'GREEN':'WARNING';
+  healthEl.className=s.gap>0.5?'ok':'bad';
+  windingEl.textContent=s.winding.toFixed(3);
+
+  const rawAlign=s.vx; // start vector is (1,0)
+  let shownAlign=rawAlign;
+  const c=cfg();
+  if(fixBox.checked && progress>=0.999999 && c.ox===0 && c.oy===0 && (c.turns%2===1)) shownAlign=-rawAlign;
+  alignEl.textContent=(shownAlign>=0?'+':'')+shownAlign.toFixed(3);
+  const sign=shownAlign>=0?'+1':'−1';
+  signEl.textContent=sign; signEl.className=shownAlign>=0?'ok':'bad';
+  warningsEl.textContent='0';
+
+  if(progress>=0.999999){
+    if(pathSel.value==='enclose' && !fixBox.checked){
+      banner.innerHTML='<span class="bad"><b>BUG:</b> semantic sign flipped while every local health check stayed green.</span>';
+    }else if(pathSel.value==='enclose' && fixBox.checked){
+      banner.innerHTML='<span class="ok"><b>FIX:</b> one bit of winding parity restores the grounded orientation.</span>';
+    }else if(pathSel.value==='double'){
+      banner.innerHTML='<span class="ok"><b>Two windings:</b> Z₂ parity returns the sign to +1.</span>';
+    }else{
+      banner.innerHTML='<span class="ok"><b>Null control:</b> no winding, no sign flip.</span>';
+    }
+  }else{
+    banner.textContent='Health stays green throughout the path.';
+  }
+}
+function tick(){
+  if(!running)return;
+  progress=Math.min(1,progress+0.0035);
+  render();
+  if(progress<1) raf=requestAnimationFrame(tick);
+  else {running=false; runBtn.textContent='Run again';}
+}
+function reset(){
+  running=false; if(raf)cancelAnimationFrame(raf);
+  progress=0; runBtn.textContent='Run loop'; render();
+}
+runBtn.onclick=()=>{ if(progress>=1)progress=0; running=true; runBtn.textContent='Running…'; tick(); };
+resetBtn.onclick=reset;
+pathSel.onchange=reset;
+fixBox.onchange=render;
+render();
+</script>
+</body>
+</html>
