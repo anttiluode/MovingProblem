@@ -102,6 +102,51 @@ The paper also explicitly notes that stable downstream behavior may require an a
 Gate 2 is **not an exact replication**. It deliberately changes the top-three input spectrum so those three directions have equal zero-lag variance but distinct temporal autocorrelation. That makes the rotation within the useful subspace impossible to resolve with zero-lag PCA alone, while AMUSE can still identify the temporal freedoms. This is a stress test of the paper's drift geometry, not a claim about the authors' original simulation.
 
 
+
+
+## Lee et al. — Stiefel Manifold Dynamical Systems for representational drift (2026)
+
+Hyun Dong Lee, Aditi Jha, Stephen E. Clarke, Michael P. Silvernagel, Paul Nuyujukian & Scott W. Linderman, **Stiefel Manifold Dynamical Systems for Tracking Representational Drift**.
+
+Preprint / PMC record: https://pmc.ncbi.nlm.nih.gov/articles/PMC13060931/
+
+This is very close prior art for the geometric language that emerged around Gate 2 and Gate 3.
+
+SMDS treats the observation/emission matrix as an orthonormal frame that evolves smoothly across trials on the **Stiefel manifold**, while the underlying latent dynamics remain shared.
+
+Its skew-symmetric displacement matrix separates two kinds of motion:
+
+```text
+W block
+    rotations within the current latent subspace
+    -> basis/frame changes that leave the Grassmann subspace fixed
+
+V block
+    motion orthogonal to the current subspace
+    -> actual subspace drift on the Grassmann manifold
+```
+
+That distinction is exactly the one MovingProblem informally reached after Gate 2:
+
+```text
+basis drift inside a useful space
+versus
+the useful space itself moving
+```
+
+The paper also reports gradual within-session representational drift in macaque and rodent neural recordings and finds that dimensions carrying more neural/behavioral variance tend to drift less.
+
+Its supplementary analysis explicitly shows that PCA can recover overall subspace drift while failing to recover **per-dimension** drift because individual principal directions can flip or swap. That is directly relevant to Gate 3's identity-crossing attack.
+
+Therefore:
+
+> **"model representational drift on Stiefel/Grassmann manifolds" is not a MovingProblem contribution.**
+
+MovingProblem's residual question is narrower: can a downstream task preserve a **named/oriented freedom** through such drift using temporal identifiability, sparse task consequence, and conservative continuity, while spending new labels only when the observations cease to identify the freedom?
+
+SMDS is also a future attacker: it uses a probabilistic state-space model with variational EM / extended Kalman smoothing and is much more sophisticated than the current windowed AMUSE tracker.
+
+
 ## Oja / Sanger — the hidden learner in Gate 1 is old
 
 Gate 1's hidden update is not a new learning rule.
