@@ -222,3 +222,40 @@ Before calling a future MovingProblem mechanism new:
 3. search the adaptive filtering / BSS / reservoir / continual-learning literature;
 4. run matched attackers;
 5. claim only the residual that survives.
+
+
+## Figueras, Persson & Viitasaari — Stiefel EKF (2026)
+
+Jordi-Lluís Figueras, Aron Persson & Lauri Viitasaari, **Extended Kalman filtering on Stiefel manifolds**, *Frontiers in Signal Processing* 6:1829279 (2026).
+
+DOI: https://doi.org/10.3389/frsip.2026.1829279
+
+This paper generalizes an Extended Kalman Filter to Stiefel-manifold-valued measurements. Its predict/update cycle maps measurement innovation to the tangent space with a logarithm map, weights it by a Kalman gain, and retracts the correction back to the manifold with the exponential map.
+
+It is directly relevant to replacing MovingProblem's hard confidence guard with a principled manifold-valued tracker.
+
+Important limitations for our use:
+- the presented process uses known anti-symmetric system dynamics;
+- the noise treatment is isotropic/scalar;
+- the authors explicitly discuss failure when noise is too large and limitations from the logarithm-map injectivity region;
+- the paper estimates a moving manifold-valued state; it does not solve downstream semantic identity through statistical degeneracy or topological sign holonomy.
+
+## Herzberg & Longuet-Higgins — sign change around a degeneracy (1963)
+
+G. Herzberg & H. C. Longuet-Higgins, **Intersection of potential energy surfaces in polyatomic molecules**, *Discussions of the Faraday Society* 35, 77–82 (1963).
+
+DOI: https://doi.org/10.1039/DF9633500077
+
+A real adiabatic eigenstate transported around a conical intersection can return with the opposite sign. Gate 4 uses the same 2×2 real-symmetric topology as an attack on oriented semantic tracking.
+
+This is old geometric-phase mathematics, not a MovingProblem discovery.
+
+## Zener — avoided crossings (1932)
+
+Clarence Zener, **Non-Adiabatic Crossing of Energy Levels**, *Proceedings of the Royal Society A* 137, 696–702 (1932).
+
+DOI: https://doi.org/10.1098/rspa.1932.0165
+
+The 2×2 normal form used in Gate 4 is the same matrix family that appears in Landau-Zener theory.
+
+MovingProblem does not obey Schrodinger dynamics, so the Landau-Zener transition probability is not claimed as a tracker prediction. The connection is structural: avoided crossing, eigenmode identity, and the distinction between adiabatic and diabatic continuation.
