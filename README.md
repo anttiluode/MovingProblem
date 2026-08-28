@@ -278,17 +278,105 @@ See [results/GATE1.md](results/GATE1.md).
 
 The next clean attack is to make the observation basis change **during one uninterrupted stream**, let the hidden skew axes reorganize online, and ask whether the task selector can persist instead of being relearned.
 
+
+# Gate 2 — stable function behind a drifting representation
+
+Gate 2 replaces the artificial basis jump with another learner.
+
+The upstream network is a paper-inspired Hebbian/anti-Hebbian similarity-matching population from Qin et al. (2021). After burn-in it remains plastic under noisy local updates, so its coordinates drift inside a useful representational equivalence class.
+
+The deliberate stress-test modification is:
+
+```text
+three useful latent directions
+same zero-lag variance
+different temporal autocorrelation
+```
+
+Therefore instantaneous covariance can recover the useful subspace but cannot say which current axis is which. Temporal statistics can.
+
+## Did it really drift?
+
+Across 12 seeds, the same fixed probe bank changed substantially in raw coordinates while its relational geometry barely moved:
+
+```text
+raw coordinate change     0.7280 ± 0.2917
+Gram/similarity change    0.0266 ± 0.0105
+```
+
+So this is no longer "press a button and rotate Q". The upstream learner itself keeps changing.
+
+## Two tasks expose the boundary
+
+### A. Task only needs geometry
+
+Classify whether consecutive latent states are relatively similar, using only the current output inner product.
+
+```text
+geometry-only accuracy    0.9909 ± 0.0005
+```
+
+No axis recovery is needed. The invariant is already enough.
+
+### B. Task needs one named/oriented freedom
+
+Classify the sign of the latent source with the strongest temporal autocorrelation.
+
+| method | accuracy |
+|---|---:|
+| **AMUSE track continuously; 16 labels once** | **0.9323 ± 0.0068** |
+| AMUSE recalibrate every window | 0.9243 ± 0.0151 |
+| frozen coordinate decoder | 0.8442 ± 0.0466 |
+| zero-lag PCA tracker | 0.5020 ± 0.0521 |
+| rotation-invariant features | 0.4985 ± 0.0131 |
+
+The frozen decoder degrades further as drift accumulates:
+
+```text
+last-quarter frozen       0.7720 ± 0.0965
+last-quarter AMUSE        0.9323 ± 0.0167
+```
+
+And the calibration budget changes from:
+
+```text
+track after one calibration    16 labels
+recalibrate every window       800 labels
+```
+
+So Gate 2 earns a cleaner sentence than "always realign":
+
+> **Use invariants when the task is invariant. Spend temporal/statistical identification and consequence only on the residual degrees of freedom that action actually requires.**
+
+This is also the first gate where smooth representational drift turns repeated calibration into **continuous lock maintenance**.
+
+See [results/GATE2.md](results/GATE2.md).
+
+## What Gate 2 does not claim
+
+- the brain runs AMUSE;
+- the Qin et al. model contains this downstream solution;
+- real neural or sensor drift is always rotational;
+- real temporal signatures stay separated;
+- superiority to adaptive BSS;
+- superiority to Euclidean/Riemannian alignment on geometry-sufficient tasks;
+- a new BSS algorithm.
+
+Those are now the attackers.
+
+
 ## Run
 
 ```bash
 python -m pip install -r requirements.txt
 python experiments/gate0_moving_basis.py
 python experiments/gate1_local_temporal_learning.py
+python experiments/gate2_drifting_representation.py
 python -m unittest discover -s tests -v
 ```
 
-The experiment runners write `results/gate0_summary.json` and `results/gate1_summary.json`.
+The experiment runners write `results/gate0_summary.json`, `results/gate1_summary.json`, and `results/gate2_summary.json`.
 
 ## Current sentence
 
-> **MovingProblem is not trying to prove that brains secretly contain our matrices. It is asking whether temporal self-calibration, local consequence and persistent computation can produce an artificial learner that keeps working while the representation itself moves — and whether any genuinely useful non-backprop learning rule survives the attackers.**
+> **MovingProblem asks what must actually remain stable when representations keep moving. Gate 2's answer is: preserve relational invariants where they are sufficient; recover named temporal freedoms only where the downstream task needs them; spend consequence only on the ambiguity that remains.**
