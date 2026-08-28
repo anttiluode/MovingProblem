@@ -365,6 +365,64 @@ See [results/GATE2.md](results/GATE2.md).
 Those are now the attackers.
 
 
+
+# Gate 3 — do not learn through ambiguity
+
+Gate 3 stress-tests the continuous-lock idea instead of adding more machinery.
+
+The controlled harness forces:
+
+- crowded temporal signatures;
+- two signatures crossing;
+- sustained exact degeneracy;
+- source disappearance and return;
+- non-orthogonal mixing;
+- the useful 3-D subspace itself bending through a 5-D ambient space.
+
+The tiny rule is:
+
+> **When the current statistics become temporarily non-identifying, do not let that interval rewrite a previously grounded semantic identity.**
+
+The tracker keeps a trusted frame, aligns new temporal frames by geometry plus signature continuity, and temporarily holds the old map when the signature gap collapses abruptly.
+
+## Result
+
+| attack / baseline | accuracy |
+|---|---:|
+| separated temporal tracker | **0.9330 ± 0.0128** |
+| EA-style zero-lag recenter + frozen readout | 0.6741 ± 0.1333 |
+| crossing, trust eigenvalue order | 0.7226 ± 0.0065 |
+| **crossing, guarded continuity** | **0.9507 ± 0.0052** |
+| guarded after crossing (last 10 windows) | **0.9649 ± 0.0053** |
+| recalibrate from 16 labels every window | 0.9360 ± 0.0115 |
+| paired Procrustes, 16 anchors every window | **0.9935 ± 0.0005** |
+| sustained exact degeneracy | 0.4731 ± 0.1895 |
+| source exactly absent | 0.4990 ± 0.0068 |
+| same source after return | **0.9332 ± 0.0151** |
+| non-orthogonal mixing | **0.9328 ± 0.0127** |
+| deforming 3-D subspace in 5-D | **0.9321 ± 0.0122** |
+
+Calibration / correspondence cost in the 40-window crossing world:
+
+```text
+guarded tracker                    16 task labels once
+task recalibration                 640 labels
+paired Procrustes                  16 paired anchors every window
+```
+
+Procrustes is the right answer when repeated paired correspondences exist.
+
+Sustained exact degeneracy is the right failure when no statistic distinguishes two freedoms.
+
+The result that survived is therefore not "AMUSE always wins". It is:
+
+> **Preserve identity through brief intervals in which identification becomes impossible; only replace that identity when the observations again contain enough information to do so.**
+
+See [results/GATE3.md](results/GATE3.md).
+
+A very relevant 2026 prior-art result is Lee et al., **Stiefel Manifold Dynamical Systems for Tracking Representational Drift**. It explicitly separates rotations *inside* a latent subspace from motion of the subspace itself on the Grassmann manifold. So that geometric framing is established prior art, not a MovingProblem invention. See [PAPERS.md](PAPERS.md).
+
+
 ## Run
 
 ```bash
@@ -372,11 +430,12 @@ python -m pip install -r requirements.txt
 python experiments/gate0_moving_basis.py
 python experiments/gate1_local_temporal_learning.py
 python experiments/gate2_drifting_representation.py
+python experiments/gate3_stress_map.py
 python -m unittest discover -s tests -v
 ```
 
-The experiment runners write `results/gate0_summary.json`, `results/gate1_summary.json`, and `results/gate2_summary.json`.
+The experiment runners write `results/gate0_summary.json` through `results/gate3_summary.json`.
 
 ## Current sentence
 
-> **MovingProblem asks what must actually remain stable when representations keep moving. Gate 2's answer is: preserve relational invariants where they are sufficient; recover named temporal freedoms only where the downstream task needs them; spend consequence only on the ambiguity that remains.**
+> **MovingProblem asks what must actually remain stable when representations keep moving. The current answer is: use relational invariants where they suffice; recover named freedoms only when action requires them; preserve grounded identity through temporary ambiguity; request new information only when identifiability is genuinely lost.**
