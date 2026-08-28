@@ -423,6 +423,94 @@ See [results/GATE3.md](results/GATE3.md).
 A very relevant 2026 prior-art result is Lee et al., **Stiefel Manifold Dynamical Systems for Tracking Representational Drift**. It explicitly separates rotations *inside* a latent subspace from motion of the subspace itself on the Grassmann manifold. So that geometric framing is established prior art, not a MovingProblem invention. See [PAPERS.md](PAPERS.md).
 
 
+
+# Gate 4 — safe gap, wrong sign
+
+Gate 3 watched local identifiability:
+
+```text
+gap healthy -> update identity
+gap bad     -> preserve identity
+```
+
+Gate 4 found a failure that never makes the gap bad.
+
+For the real-symmetric two-mode operator
+
+```text
+L(a,b) = [[a,b],[b,-a]]
+```
+
+take a closed loop
+
+```text
+a = cos(phi)
+b = sin(phi)
+phi: 0 -> 2 pi
+```
+
+The eigengap is exactly 2 everywhere.
+
+The Gate-3-style local sign-continuity tracker never raises low confidence.
+
+Yet after one loop:
+
+```text
+oriented eigenvector alignment with start = -1
+low-confidence fraction                  =  0
+minimum gap                              =  2
+```
+
+The eigenLINE returned correctly; the oriented eigenvector acquired the old real sign holonomy around a conical degeneracy.
+
+A non-enclosing loop returns +1.
+
+Two enclosing loops return +1.
+
+So an externally grounded sign is sensitive to **path topology**, not merely local distance from degeneracy.
+
+In the 2-D laboratory, storing winding parity repairs the final semantic orientation:
+
+```text
+local continuity only        -1.0000
++ winding parity              +1.0000
+```
+
+The result survives small operator noise.
+
+This is not a new topological method. It is an attack showing that a purely local confidence guard is incomplete for oriented semantic tasks.
+
+Gate 4 also confirms Claude's finite-sample correction: at a population-level exact crossing, estimator noise creates an apparent avoided gap with
+
+```text
+gap ~ N^(-0.49934 ± 0.00359)
+```
+
+so future crossing experiments must measure coupling relative to the estimator noise floor, not in absolute units.
+
+See [results/GATE4.md](results/GATE4.md) and [MATH.md](MATH.md).
+
+The conceptual separation is now:
+
+```text
+SUBSPACE
+    what family of freedoms exists?
+
+STATISTICAL FRAME
+    what basis do current statistics identify?
+
+SEMANTIC FRAME
+    what externally grounded meaning is attached?
+
+PATH MEMORY
+    how did that frame get here?
+```
+
+A single matrix snapshot can describe the first two locally.
+
+It does not contain the last two by itself.
+
+
 ## Run
 
 ```bash
@@ -431,11 +519,12 @@ python experiments/gate0_moving_basis.py
 python experiments/gate1_local_temporal_learning.py
 python experiments/gate2_drifting_representation.py
 python experiments/gate3_stress_map.py
+python experiments/gate4_topological_holonomy.py
 python -m unittest discover -s tests -v
 ```
 
-The experiment runners write `results/gate0_summary.json` through `results/gate3_summary.json`.
+The experiment runners write `results/gate0_summary.json` through `results/gate4_summary.json`.
 
 ## Current sentence
 
-> **MovingProblem asks what must actually remain stable when representations keep moving. The current answer is: use relational invariants where they suffice; recover named freedoms only when action requires them; preserve grounded identity through temporary ambiguity; request new information only when identifiability is genuinely lost.**
+> **MovingProblem asks what must actually remain stable when representations keep moving. The current answer is: use relational invariants where they suffice; recover named freedoms only when action requires them; preserve grounded identity through temporary ambiguity; and remember enough path history that a locally safe moving frame cannot silently change an externally grounded meaning.**
