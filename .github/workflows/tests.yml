@@ -17,3 +17,4 @@ jobs:
       - run: python experiments/gate0_moving_basis.py
       - run: python experiments/gate1_local_temporal_learning.py
       - run: python experiments/gate2_drifting_representation.py
+      - run: python experiments/gate3_stress_map.py
