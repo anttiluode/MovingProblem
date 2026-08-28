@@ -1,0 +1,21 @@
+{
+  "crossing_guarded": {"mean": 0.9507435897435896, "std": 0.00519672177047832},
+  "crossing_guarded_last10": {"mean": 0.96485, "std": 0.005300235843809234},
+  "crossing_low_confidence_fraction": {"mean": 0.259375, "std": 0.032923917977664814},
+  "crossing_ordered": {"mean": 0.7225641025641025, "std": 0.0064515465071555405},
+  "crossing_paired_procrustes": {"mean": 0.993451923076923, "std": 0.0005131309156741957},
+  "crossing_recalibrate_each": {"mean": 0.9360416666666667, "std": 0.011518572156307083},
+  "crowded_guarded": {"mean": 0.8496666666666666, "std": 0.13583596033325682},
+  "crowded_low_confidence_fraction": {"mean": 0.12187500000000001, "std": 0.03630921887069453},
+  "deforming_subspace_guarded": {"mean": 0.9320608974358975, "std": 0.012182637497431315},
+  "degenerate_guarded": {"mean": 0.4730833333333333, "std": 0.18954400441705785},
+  "degenerate_guarded_last10": {"mean": 0.45922500000000005, "std": 0.18824945385046937},
+  "dropout_after_return": {"mean": 0.9331770833333333, "std": 0.015122786655087},
+  "dropout_hidden_interval": {"mean": 0.498953125, "std": 0.006808467126260877},
+  "labels_guarded_once": {"mean": 16.0, "std": 0.0},
+  "labels_recalibrate_each": {"mean": 640.0, "std": 0.0},
+  "nonorthogonal_guarded": {"mean": 0.9327692307692308, "std": 0.012732912257977843},
+  "paired_anchors_per_window": {"mean": 16.0, "std": 0.0},
+  "separated_ea_recenter": {"mean": 0.6740929487179488, "std": 0.13331718401799217},
+  "separated_guarded": {"mean": 0.933025641025641, "std": 0.012800856726752931}
+}
