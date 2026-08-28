@@ -70,6 +70,38 @@ The point of Gate 0 is not the random-feature learner. The point is whether the 
 
 
 
+
+
+## Qin et al. — coordinated representational drift (2021)
+
+Shanshan Qin, Shiva Farashahi, David Lipshutz, Anirvan M. Sengupta, Dmitri B. Chklovskii & Cengiz Pehlevan, **Coordinated drift of receptive fields during noisy representation learning**.
+
+bioRxiv: https://doi.org/10.1101/2021.08.30.458264
+
+This paper is the direct provenance for MovingProblem Gate 2.
+
+Its core linear model uses neural dynamics
+
+```text
+dy/dt = W x - M y
+```
+
+and local Hebbian / effective anti-Hebbian updates
+
+```text
+Delta W = eta (y x^T - W)
+Delta M = eta (y y^T - M)
+```
+
+with synaptic noise added during continued learning.
+
+The important observation is not merely that receptive fields drift. The network can continue to move through a degenerate family of equally good representations while preserving population representational similarity. In the linear case, the drift behaves approximately like a coordinated rotation of the represented cloud rather than independent motion of every unit.
+
+The paper also explicitly notes that stable downstream behavior may require an adaptive readout when drift is not confined to a coding-null space, and leaves the mechanism of such adaptation open.
+
+Gate 2 is **not an exact replication**. It deliberately changes the top-three input spectrum so those three directions have equal zero-lag variance but distinct temporal autocorrelation. That makes the rotation within the useful subspace impossible to resolve with zero-lag PCA alone, while AMUSE can still identify the temporal freedoms. This is a stress test of the paper's drift geometry, not a claim about the authors' original simulation.
+
+
 ## Oja / Sanger — the hidden learner in Gate 1 is old
 
 Gate 1's hidden update is not a new learning rule.
