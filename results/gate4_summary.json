@@ -1,0 +1,20 @@
+{
+  "double_loop_guard_final_alignment": {"mean": 1.0, "std": 0.0},
+  "double_loop_winding": {"mean": 1.9999999999999998, "std": 0.0},
+  "enclosing_guard_final_alignment": {"mean": -1.0, "std": 0.0},
+  "enclosing_low_confidence_fraction": {"mean": 0.0, "std": 0.0},
+  "enclosing_min_gap": {"mean": 1.9999999999999996, "std": 0.0},
+  "enclosing_winding": {"mean": 0.9999999999999997, "std": 0.0},
+  "enclosing_winding_corrected_alignment": {"mean": 1.0, "std": 0.0},
+  "gap_mean_n128": {"mean": 0.19077478653246213, "std": 0.0013951295772639007},
+  "gap_mean_n4096": {"mean": 0.033726169216262446, "std": 0.0003513301467128231},
+  "large_delta_measured_gap_over_noise": {"mean": 8.140878255116437, "std": 0.028196582832612553},
+  "large_delta_over_noise": {"mean": 4.0, "std": 0.0},
+  "noise_floor_loglog_slope": {"mean": -0.4993414040859045, "std": 0.0035861056888750365},
+  "noisy_enclosing_guard_final_alignment": {"mean": -0.9999242578549727, "std": 0.00011308876892720874},
+  "noisy_enclosing_winding_corrected_alignment": {"mean": 0.9999242578549727, "std": 0.00011308876892720874},
+  "non_enclosing_guard_final_alignment": {"mean": 1.0, "std": 0.0},
+  "non_enclosing_winding": {"mean": -7.774689221355263e-16, "std": 0.0},
+  "tiny_delta_measured_gap_over_noise": {"mean": 2.1835583553523983, "std": 0.03162330440480805},
+  "tiny_delta_over_noise": {"mean": 0.25, "std": 0.0}
+}
