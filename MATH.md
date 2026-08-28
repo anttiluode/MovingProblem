@@ -328,3 +328,134 @@ semantic / task grounding
     +
 calibration cost.
 ```
+
+
+## 11. Effective codimension, estimator noise, and topological holonomy
+
+Gate 4 adds three corrections.
+
+### Effective codimension is family-dependent
+
+For a real symmetric 2x2 traceless block,
+
+```text
+L(a,b) = [[a,b],[b,-a]]
+```
+
+a degeneracy requires `a=0` and `b=0`: codimension 2 in the full real-symmetric family.
+
+But Gate 3's independent-source construction imposed `b=0` structurally. Inside that restricted one-parameter family, degeneracy therefore required only `a=0`.
+
+So the relevant codimension is not the ambient matrix-class codimension. It is the codimension **inside the operator family actually explored by the system**.
+
+### Finite samples fake an avoided crossing
+
+At a population-level exact crossing, finite-sample estimator noise generates off-diagonal terms of order `N^-1/2`.
+
+Gate 4 measures the apparent gap and obtains
+
+```text
+gap ~ N^(-0.49934 ± 0.00359)
+```
+
+over N from 128 to 4096.
+
+Therefore coupling / gap sweeps must be stated relative to the estimator noise floor, e.g.
+
+```text
+delta sqrt(N) / sigma
+```
+
+rather than in absolute units.
+
+### A safe gap does not guarantee oriented semantic return
+
+For the constant-gap loop
+
+```text
+a = cos(phi)
+b = sin(phi)
+phi: 0 -> 2pi
+```
+
+the gap is 2 everywhere, but a continuously oriented principal eigenvector returns with sign -1.
+
+This is the real sign holonomy associated with encircling a conical degeneracy.
+
+Consequently a gap-only semantic guard is local and incomplete.
+
+If a task depends only on the eigenLINE / projector, there is no failure.
+
+If a task externally grounds an ORIENTATION, the path history matters.
+
+Gate 4 stores winding parity in the 2-D laboratory and restores the oriented semantic sign. In a realistic high-dimensional system, locating the relevant degeneracy and measuring winding are themselves nontrivial inference problems.
+
+## 12. Landau-Zener is an analogy, not our dynamics
+
+The normal form
+
+```text
+[[v t, delta],
+ [delta, -v t]]
+```
+
+is the Landau-Zener two-state Hamiltonian.
+
+Landau-Zener theory gives an exact transition law for Schrodinger evolution.
+
+MovingProblem's frame tracker is not governed by the Schrodinger equation, so the Landau-Zener probability is not a quantitative prediction here.
+
+The relevant inherited distinction is only:
+
+```text
+follow instantaneous eigenmode
+versus
+preserve an underlying / diabatic source identity
+```
+
+and the fact that coupling scale relative to passage rate controls the classical avoided-crossing geometry.
+
+## 13. Manifold filtering is prior art; anisotropic semantic uncertainty remains
+
+Figueras, Persson & Viitasaari (2026) give an Extended Kalman Filter for Stiefel-manifold-valued measurements.
+
+Conceptually, Gate 3's hard guard resembles an extreme Kalman rule:
+
+```text
+identifiable -> trust measurement
+ambiguous    -> trust prediction
+```
+
+A principled future tracker should instead maintain uncertainty in the tangent space.
+
+But MovingProblem's uncertainty near degeneracy is highly anisotropic:
+
+```text
+rotation inside nearly-degenerate plane -> huge uncertainty
+well-separated directions               -> small uncertainty
+```
+
+whereas the presented Stiefel EKF uses restrictive isotropic scalar-noise assumptions.
+
+The paper is therefore an important attacker / ancestor, not a drop-in solution.
+
+## 14. Three objects must now be kept separate
+
+The experiments now distinguish:
+
+```text
+SUBSPACE
+    which family of freedoms exists?
+
+STATISTICAL FRAME
+    which basis do current stream statistics identify?
+
+SEMANTIC FRAME
+    which externally grounded meaning is attached to those freedoms?
+```
+
+A matrix at one instant can describe a local operator.
+
+It does not encode the path by which the representation arrived there, the global topology of that path, or the externally grounded semantic convention.
+
+That is why a static matrix description can be mathematically adequate locally while still being an inadequate complete explanation of a continuously changing physical computation.
