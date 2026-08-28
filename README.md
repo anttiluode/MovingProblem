@@ -1,5 +1,7 @@
 # MovingProblem — give the system a moving problem
 
+> **STATUS: FROZEN AT GATE 4.** No Gate 5 is planned here. The surviving narrow result is the Gate 4 holonomy failure: a frame tracker can return with the wrong oriented sign while every local eigengap/health check remains green. See [FREEZE.md](FREEZE.md), [Gate 4](results/GATE4.md), and the standalone [visual demo](holonomy_demo.html).
+
 > **Static weights throw together at least three problems that can be separated: what to compute now, what evidence to gather next, and what should persist.**
 
 This repository is an attempt to turn a long biological / signal-processing detour into a useful artificial machine.
